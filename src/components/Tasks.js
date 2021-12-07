@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import DayPickerInput from "react-day-picker/DayPickerInput";
 import "react-day-picker/lib/style.css";
 import dateFnsFormat from "date-fns/format";
-import  isAfter from "date-fns/isAfter";
-import  isBefore from "date-fns/isBefore";
+import isAfter from "date-fns/isAfter";
+import isBefore from "date-fns/isBefore";
 import addDays from "date-fns/addDays";
 import isToday from "date-fns/isToday";
 
@@ -22,7 +22,7 @@ const AddTask = ({ onCancel, onAddTask }) => {
       <div className="add-task-actions-container">
         <div className="btns-container">
           <button
-          disabled={!task}
+            disabled={!task}
             className="add-btn"
             onClick={() => {
               onAddTask(task, date);
@@ -49,9 +49,9 @@ const AddTask = ({ onCancel, onAddTask }) => {
             formatDate={formatDate}
             format={FORMAT}
             dayPickerProps={{
-                modifiers:{
-                    disabled: [{before: new Date()}]
-                }
+              modifiers: {
+                disabled: [{ before: new Date() }],
+              },
             }}
           />
         </div>
@@ -61,67 +61,72 @@ const AddTask = ({ onCancel, onAddTask }) => {
 };
 
 const TASKS_HEADER_MAPPING = {
-    INBOX: "Inbox",
-    TODAY: "Today",
-    NEXT_7: "Next 7 Days",
-}
+  INBOX: "Inbox",
+  TODAY: "Today",
+  NEXT_7: "Next 7 Days",
+};
 
-const TaskItems = ({selectedTab,tasks}) =>{
-    let tasksToRender = [...tasks];
-if(selectedTab==='NEXT_7'){
-    tasksToRender= tasksToRender.filter((task) => 
-    isAfter(task.date,new Date())&& 
-    isBefore(task.date,addDays(new Date(),7))
-    )
+const TaskItems = ({ selectedTab, tasks }) => {
+  let tasksToRender = [...tasks];
+  if (selectedTab === "NEXT_7") {
+    tasksToRender = tasksToRender.filter(
+      (task) =>
+        isAfter(task.date, new Date()) &&
+        isBefore(task.date, addDays(new Date(), 7))
+    );
     // .map(task => <p>
     //     {task.text} {dateFnsFormat(new Date(task.date),FORMAT )}{"   "}
     // </p>);
-}
+  }
 
-if(selectedTab==='TODAY'){
-    tasksToRender= tasksToRender.filter(task=> isToday(task.date));
-}
+  if (selectedTab === "TODAY") {
+    tasksToRender = tasksToRender.filter((task) => isToday(task.date));
+  }
 
-return (
+  return (
     <div className="task-items-container">
-{tasksToRender.map(task => (
-    <div className="task-item">
-        <p>{task.text}</p>
-        <p>{dateFnsFormat(new Date(task.date),FORMAT )}</p>
+      {tasksToRender.map((task) => (
+        <div className="task-item">
+          <p>{task.text}</p>
+          <p>{dateFnsFormat(new Date(task.date), FORMAT)}</p>
+        </div>
+      ))}
     </div>
-))}
-    </div>
-)
-
-
-}
+  );
+};
 
 const Tasks = ({ selectedTab }) => {
   const [showAddTask, setShowAddTask] = useState(false);
   const [tasks, setTasks] = useState([]);
 
   const addNewTask = (text, date) => {
-      const newTaskItem = {text, date: date || new Date()}
+    const newTaskItem = { text, date: date || new Date() };
     setTasks((prevState) => [...prevState, newTaskItem]);
   };
 
   return (
     <div className="tasks">
       <h1>{TASKS_HEADER_MAPPING[selectedTab]}</h1>
-     {selectedTab==="INBOX"? <div
-        className="add-task-btn"
-        onClick={() => setShowAddTask((prevState) => !prevState)}
-      >
-        <span className="plus">+</span>
-        <span className="add-task-text">Add Task</span>
-      </div>:null}
+      {selectedTab === "INBOX" ? (
+        <div
+          className="add-task-btn"
+          onClick={() => setShowAddTask((prevState) => !prevState)}
+        >
+          <span className="plus">+</span>
+          <span className="add-task-text">Add Task</span>
+        </div>
+      ) : null}
       {showAddTask && (
         <AddTask
           onAddTask={addNewTask}
           onCancel={() => setShowAddTask(false)}
         />
       )}
-      {tasks.length > 0 ? <TaskItems tasks={tasks} selectedTab={selectedTab}/>:<p>No Tasks Yet!</p>}
+      {tasks.length > 0 ? (
+        <TaskItems tasks={tasks} selectedTab={selectedTab} />
+      ) : (
+        <p>No Tasks Yet!</p>
+      )}
     </div>
   );
 };
